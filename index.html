@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMART CONTRACT TEST</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: impact;
+        }
+        button:hover {
+            background-color: yellow;
+        }
+        input {
+            width: 40%;
+            height: 33px;
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div> <h4>Registration</h4>
+        <div className="form">
+          <div className="form-body">
+              <div className="username">
+                  <label className="form__label" for="firstName">Product Name </label>
+                  <input className="form__input" type="text" id="firstName"  onChange={this.handleNameChange} placeholder="Product Name"/>
+              </div>
+    
+              <div>
+                  <label className="form__label" for="quantity">Product quantity</label>
+                  <input className="form__input" type="number" id="quantity" onChange={this.handleQuantityChange} placeholder="Quantity"/>
+              </div>
+          </div>
+          <div class="footer">
+              <button type="submit" class="btn" onClick="addProduct()">Add product</button>
+              <p id = "length">helloSeller</p>
+          </div>
+
+		  <div class="footer">
+			<label className="form__label" for="productIdforSend">Product Id</label>
+			<input className="form__input" type="number" id="productIdforSend"  placeholder="id"/>
+			<button type="submit" class="btn" onClick="sendProduct()">Send product</button>
+			<p id = "sender">Product Status</p>
+		  </div>
+           
+		  <div>
+			<label className="form__label" for="productId">Product Id</label>
+			<input className="form__input" type="number" id="productId"  placeholder="id"/>
+			<button type="submit" class="btn" onClick="buyProduct()">BuyProduct</button>
+		  </div>
+
+		  <div class="footer">
+			<label className="form__label" for="productIdforOwnership">Product Id</label>
+			<input className="form__input" type="number" id="productIdforOwnership"  placeholder="id"/>
+			<button type="submit" class="btn" onClick="getOwnership()">Check Ownership</button>
+			<p id = "owner">Ownership Status</p>
+		</div>
+
+      </div>  
+
+      </div>
+
+    <button onclick="connectMetamask()">CONNECT TO METAMASK</button> <br>
+	<p id="accountArea">Connection Status: NOT CONNECTED to Metamask </p>
+     
+	<button onclick="connectBuyerContract()">CONNECT TO BUYERS'S CONTRACT</button> <br>
+	<button onclick="connectSellerContract()">CONNECT TO SELLER'S CONTRACT</button> <br>
+	
+
+	<button onclick="connectContract()">CONNECT TO SMART CONTRACT</button> <br>
+	<p id="contractArea">Connection Status: NOT CONNECTED to Smart Contract</p>
+	
+	
+    <script>
+        let account;
+		var isBuyer = false;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined"){
+                const accounts = await ethereum.request({method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = `Account is: ${account}`;
+            }
+
+        }
+
+		const connectBuyerContract = async () => {
+          isBuyer = true;
+        }
+
+		const connectSellerContract = async () => {
+          isBuyer = false;
+        }
+
+        const connectContract = async () => {
+            const ABISeller = [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "getLength",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getNum",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_productName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_productQuantity",
+						"type": "uint256"
+					}
+				],
+				"name": "insertProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "k",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "productStructs",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "productName",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "productManufacturer",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "productOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "productQuantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "fromPath",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "qrCode",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productId",
+						"type": "uint256"
+					}
+				],
+				"name": "sendProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		];
+            const ABIBuyer =[
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productId",
+						"type": "uint256"
+					}
+				],
+				"name": "BuyProduct",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productId",
+						"type": "uint256"
+					}
+				],
+				"name": "checkOwner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "own",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLength",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getNum",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_productName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_productQuantity",
+						"type": "uint256"
+					}
+				],
+				"name": "insertProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "k",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "productStructs",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "productName",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "productManufacturer",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "productOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "productQuantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "fromPath",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "qrCode",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productId",
+						"type": "uint256"
+					}
+				],
+				"name": "sendProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		];
+             
+            const Address = "0x5369D8B4f4527C544550CCD5E92A1a54E2464cCd";
+            window.web3 = await new Web3(window.ethereum);
+             
+			if(isBuyer){
+				window.contract = await new window.web3.eth.Contract(ABIBuyer, Address);
+				document.getElementById("contractArea").innerHTML = "Connection Status: Connected to Buyer's Contract";
+			}
+			else {
+				window.contract = await new window.web3.eth.Contract(ABISeller, Address);
+				document.getElementById("contractArea").innerHTML = "Connection Status: Connected to Seller's Contract";
+			}  
+        }
+ 
+        const addProduct = async() =>{
+            const name = document.getElementById("firstName").value;
+            const quantity = document.getElementById("quantity").value;
+
+            await window.contract.methods.insertProduct(name,quantity).send({ from: account });
+            const res = await window.contract.methods.getLength().call();
+            document.getElementById("length").innerHTML = `Product added with id ${res-1}`;
+            
+        }
+
+		const buyProduct = async() =>{
+			const id = document.getElementById("productId").value;
+			const res = await window.contract.methods.BuyProduct(id).send({ from: account });
+			console.log(res);
+		}
+         
+		const sendProduct = async() =>{
+			const id = document.getElementById("productIdforSend").value;
+		    await window.contract.methods.sendProduct(id).send({ from: account });
+			document.getElementById("sender").innerHTML = `Product Status : Ownwership Changed`;
+		}
+
+
+		const getOwnership = async() =>{
+			const id = document.getElementById("productIdforOwnership").value;
+			const res = await window.contract.methods.checkOwner(id).call();
+            console.log(res);
+            document.getElementById("owner").innerHTML = `Owner of the product is ${res}`;
+		}
+
+    </script>
+</body>
+</html>
